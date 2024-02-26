@@ -1,8 +1,8 @@
 import { Disclosure } from "@headlessui/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-import { classNames } from "utils/formatting";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
 import { Button } from "components/ui/button";
+import { Link } from 'react-router-dom';
 
 const navigation = [
     { name: "Why Acada", href: "#", current: true },
@@ -59,12 +59,12 @@ const Header = () => {
                                                 {item.name}
                                             </Button>
                                         ))}
-                                        <Button 
-                                        onClick={() => {alert("what!")}}
-                                        variant="magic">
-                                            Sign up
-                                        </Button>
-                                            
+                                        <Link to="/chat">
+                                            <Button 
+                                            variant="magic">
+                                                Sign up
+                                            </Button>
+                                        </Link>                                            
                                     </div>
                                 </div>
                             </div>
