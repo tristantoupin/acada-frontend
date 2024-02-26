@@ -1,14 +1,15 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
-const colors = require("tailwindcss/colors");
-const {
-    default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: ["./src/**/*.{html,jsx,js,tsx,ts}"],
     darkMode: "class",
     theme: {
+        container: {
+            center: true,
+            padding: "2rem",
+            screens: {
+                "2xl": "1400px",
+            },
+        },
         colors: {
             light: "#f1f5f9",
             dark: "#0f172a",
@@ -68,6 +69,7 @@ module.exports = {
                 900: "#280005",
             },
             slate: {
+                50: "#f8fafc",
                 100: "#f1f5f9",
                 200: "#e2e8f0",
                 300: "#cbd5e1",
@@ -77,6 +79,40 @@ module.exports = {
                 700: "#334155",
                 800: "#1e293b",
                 900: "#0f172a",
+                950: "#020617",
+            },
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            primary: {
+                DEFAULT: "hsl(var(--primary))",
+                foreground: "hsl(var(--primary-foreground))",
+            },
+            secondary: {
+                DEFAULT: "hsl(var(--secondary))",
+                foreground: "hsl(var(--secondary-foreground))",
+            },
+            destructive: {
+                DEFAULT: "hsl(var(--destructive))",
+                foreground: "hsl(var(--destructive-foreground))",
+            },
+            muted: {
+                DEFAULT: "hsl(var(--muted))",
+                foreground: "hsl(var(--muted-foreground))",
+            },
+            accent: {
+                DEFAULT: "hsl(var(--accent))",
+                foreground: "hsl(var(--accent-foreground))",
+            },
+            popover: {
+                DEFAULT: "hsl(var(--popover))",
+                foreground: "hsl(var(--popover-foreground))",
+            },
+            card: {
+                DEFAULT: "hsl(var(--card))",
+                foreground: "hsl(var(--card-foreground))",
             },
         },
         fontSize: {
@@ -94,75 +130,30 @@ module.exports = {
             "8xl": "6rem",
             "9xl": "8rem",
         },
-        fontFamily: {
-            poppins: "Poppins",
-        },
-        borderRadius: {
-            none: "0",
-            xs: "0.0625rem",
-            sm: "0.3125rem",
-            default: "0.625rem",
-            lg: "1.25rem",
-            xl: "1.5625rem",
-            "2xl": "3.125rem",
-            full: "9999px",
-        },
         extend: {
-            animation: {
-                first: "moveVertical 30s ease infinite",
-                second: "moveInCircle 20s reverse infinite",
-                third: "moveInCircle 40s linear infinite",
-                fourth: "moveHorizontal 40s ease infinite",
-                fifth: "moveInCircle 20s ease infinite",
+            borderRadius: {
+                lg: `var(--radius)`,
+                md: `calc(var(--radius) - 2px)`,
+                sm: "calc(var(--radius) - 4px)",
+            },
+            fontFamily: {
+                poppins: "Poppins",
             },
             keyframes: {
-                moveHorizontal: {
-                    "0%": {
-                        transform: "translateX(-50%) translateY(-10%)",
-                    },
-                    "50%": {
-                        transform: "translateX(50%) translateY(10%)",
-                    },
-                    "100%": {
-                        transform: "translateX(-50%) translateY(-10%)",
-                    },
+                "accordion-down": {
+                    from: { height: "0" },
+                    to: { height: "var(--radix-accordion-content-height)" },
                 },
-                moveInCircle: {
-                    "0%": {
-                        transform: "rotate(0deg)",
-                    },
-                    "50%": {
-                        transform: "rotate(180deg)",
-                    },
-                    "100%": {
-                        transform: "rotate(360deg)",
-                    },
+                "accordion-up": {
+                    from: { height: "var(--radix-accordion-content-height)" },
+                    to: { height: "0" },
                 },
-                moveVertical: {
-                    "0%": {
-                        transform: "translateY(-50%)",
-                    },
-                    "50%": {
-                        transform: "translateY(50%)",
-                    },
-                    "100%": {
-                        transform: "translateY(-50%)",
-                    },
-                },
+            },
+            animation: {
+                "accordion-down": "accordion-down 0.2s ease-out",
+                "accordion-up": "accordion-up 0.2s ease-out",
             },
         },
     },
-    plugins: [addVariablesForColors],
+    plugins: [require("tailwindcss-animate")],
 };
-
-// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
-function addVariablesForColors({ addBase, theme }) {
-    let allColors = flattenColorPalette(theme("colors"));
-    let newVars = Object.fromEntries(
-        Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
-    );
-
-    addBase({
-        ":root": newVars,
-    });
-}
