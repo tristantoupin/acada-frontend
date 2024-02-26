@@ -23,6 +23,7 @@ import { IconWorld } from "@tabler/icons-react";
 import { IconCommand } from "@tabler/icons-react";
 import { IconCaretLeftFilled } from "@tabler/icons-react";
 import { IconCaretDownFilled } from "@tabler/icons-react";
+import LightGradientGrainyBackground from "assets/backgrounds/LightGradientGrainyBackground.svg"
 
 
 export const MacbookScroll = ({
@@ -73,7 +74,7 @@ export const MacbookScroll = ({
   return (
     <div
       ref={ref}
-      className="min-h-[200vh]  flex flex-col items-center py-0 md:py-10 justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.35] sm:scale-50"
+      className="min-h-[200vh]  flex flex-col items-center py-0 md:py-80 justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.35] sm:scale-50"
     >
       <motion.h2
         style={{
@@ -175,7 +176,7 @@ export const Lid = ({
       >
         <div className="absolute inset-0 bg-[#272729] rounded-lg" />
         <img
-          src={src}
+          src={src as string}
           alt="Acada Logo"
           className="object-cover object-left-top absolute rounded-lg inset-0 h-full w-full"
         />

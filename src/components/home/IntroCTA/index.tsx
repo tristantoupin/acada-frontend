@@ -4,7 +4,7 @@ import MagicBorderButton from "components/buttons/MagicBorderButton";
 
 export const IntroCTA = () => {
     return (
-        <div className="absolute z-10 inset-y-50 inset-x-0 flex items-center justify-center">
+        <div className=" w-full">
             <MacbookScroll
                 src={Preview}
                 showGradient={false}
@@ -20,8 +20,14 @@ const Content = () => {
     return (
         <div className="space-y-4 w-full">
             <div className="space-x-4">
-                <MagicBorderButton text="Sign up with Email" onClick={() => {}} />
-                <MagicBorderButton text="Sign up with Google" onClick={() => {}} />
+                <MagicBorderButton
+                    text="Sign up with Email"
+                    onClick={() => {}}
+                />
+                <MagicBorderButton
+                    text="Sign up with Google"
+                    onClick={() => {}}
+                />
             </div>
             <div className="w-full text-center">
                 Acada is an AI-base tutor that helps you learn your subjects
