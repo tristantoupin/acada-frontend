@@ -11,8 +11,6 @@ const Home = () => {
                 style={{
                     backgroundPosition: "center",
                     backgroundSize: "cover",
-                    width: "100vw",
-                    height: "150vh",
                     backgroundImage: `url(${LightGradientGrainyBackground})`,
                 }}
             >
