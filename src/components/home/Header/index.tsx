@@ -1,8 +1,8 @@
 import { Disclosure } from "@headlessui/react";
-import { IconMenu2, IconX } from "@tabler/icons-react"
-import { classNames } from "utils/formatting";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
-import MagicBorderButton from "components/buttons/MagicBorderButton";
+import { Button } from "components/ui/button";
+import { Link } from 'react-router-dom';
 
 const navigation = [
     { name: "Why Acada", href: "#", current: true },
@@ -51,26 +51,20 @@ const Header = () => {
                                 <div className="hidden sm:ml-6 sm:block">
                                     <div className="flex space-x-4 items-center">
                                         {navigation.map((item) => (
-                                            <a
+                                            <Button
                                                 key={item.name}
-                                                href={item.href}
-                                                className={classNames(
-                                                    item.current && "underline",
-                                                    "text-dark hover:text-slate-700 px-3 py-2 text-sm font-medium"
-                                                )}
-                                                aria-current={
-                                                    item.current
-                                                        ? "page"
-                                                        : undefined
-                                                }
+                                                variant="link"
+                                                onClick={() => {alert(item.name)}}
                                             >
                                                 {item.name}
-                                            </a>
+                                            </Button>
                                         ))}
-                                        <MagicBorderButton
-                                            text={"Sign up"}
-                                            onClick={() => {}}
-                                        />
+                                        <Link to="/chat">
+                                            <Button 
+                                            variant="magic">
+                                                Sign up
+                                            </Button>
+                                        </Link>                                            
                                     </div>
                                 </div>
                             </div>
@@ -80,20 +74,9 @@ const Header = () => {
                     <Disclosure.Panel className="sm:hidden">
                         <div className="space-y-1 px-2 pb-3 pt-2">
                             {navigation.map((item) => (
-                                <Disclosure.Button
-                                    key={item.name}
-                                    as="a"
-                                    href={item.href}
-                                    className={classNames(
-                                        item.current && "underline",
-                                        "text-dark hover:text-slate-700 block rounded-md px-3 py-2 text-base font-medium"
-                                    )}
-                                    aria-current={
-                                        item.current ? "page" : undefined
-                                    }
-                                >
+                                <Button key={item.name} variant="link">
                                     {item.name}
-                                </Disclosure.Button>
+                                </Button>
                             ))}
                         </div>
                     </Disclosure.Panel>
