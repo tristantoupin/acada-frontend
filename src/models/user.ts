@@ -1,6 +1,8 @@
 import { MongoDocument } from "models/document";
 
-export type User = MongoDocument & {
+export type User = MongoDocument & CoreUser
+
+export type CoreUser = {
     email: string;
     first_name: string;
     last_name: string;
