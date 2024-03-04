@@ -7,33 +7,48 @@ import {
     updateData,
     createData,
     deleteData,
-} from "utils/api-connector";
+} from "services/api-connector";
 
-type CreateUserParams = CoreUser;
+interface UseUserParams extends ObjectId {
+    accessToken?: string;
+}
+interface UseCreateUserParams {
+    accessToken: string;
+    newUser: CoreUser;
+}
 type UpdateUserParams = ObjectId & Partial<CoreUser>; // Make all other User properties optional
+
+interface UseUpdateUserParams extends UpdateUserParams {
+    accessToken: string;
+}
+interface UseDeleteUserParams extends ObjectId {
+    accessToken: string;
+}
 
 const QUERY_KEY = "User";
 const USER_QUERY_PATH = "users";
 
-export const useUser = ({id}: ObjectId) => {
+export const useUser = ({ id, accessToken }: UseUserParams) => {
     return useQuery({
         queryKey: [QUERY_KEY, id],
-        queryFn: () => fetchData(USER_QUERY_PATH, id),
+        queryFn: () => fetchData(accessToken!, USER_QUERY_PATH, id),
+        enabled: !!accessToken,
     });
 };
 
-export const useUsers = () => {
+export const useUsers = (accessToken?: string) => {
     return useQuery({
         queryKey: [QUERY_KEY],
-        queryFn: () => fetchAllData(USER_QUERY_PATH),
+        queryFn: () => fetchAllData(accessToken!, USER_QUERY_PATH),
+        enabled: !!accessToken,
     });
 };
 
 export const useCreateUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newUser: CreateUserParams) =>
-            createData(USER_QUERY_PATH, newUser),
+        mutationFn: ({ accessToken, newUser }: UseCreateUserParams) =>
+            createData(accessToken, USER_QUERY_PATH, newUser),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
         },
@@ -43,8 +58,8 @@ export const useCreateUser = () => {
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updates }: UpdateUserParams) =>
-            updateData(USER_QUERY_PATH, id, updates),
+        mutationFn: ({ accessToken, id, ...updates }: UseUpdateUserParams) =>
+            updateData(accessToken, USER_QUERY_PATH, id, updates),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
         },
@@ -54,7 +69,8 @@ export const useUpdateUser = () => {
 export const useDeleteUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id }: ObjectId) => deleteData(USER_QUERY_PATH, id),
+        mutationFn: ({ accessToken, id }: UseDeleteUserParams) =>
+            deleteData(accessToken, USER_QUERY_PATH, id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
         },

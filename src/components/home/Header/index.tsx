@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { Disclosure } from "@headlessui/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
@@ -11,6 +12,7 @@ const navigation = [
 ];
 
 const Header = () => {
+    const { loginWithRedirect } = useAuth0()
     return (
         <Disclosure as="nav" className="bg-transparent">
             {({ open }) => (
@@ -61,6 +63,7 @@ const Header = () => {
                                         ))}
                                         <Link to="/chat">
                                             <Button 
+                                            onClick={() => loginWithRedirect()}
                                             variant="magic">
                                                 Sign up
                                             </Button>

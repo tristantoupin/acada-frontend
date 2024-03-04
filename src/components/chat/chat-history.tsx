@@ -3,7 +3,7 @@ import ChatHeader from "./chat-header";
 
 const ChatHistory = () => {
     return (
-        <div className="h-full w-full bg-slate-200">
+        <div className="flex h-full flex-col ">
             <ChatHeader title="History" />
         </div>
     );

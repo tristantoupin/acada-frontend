@@ -4,15 +4,14 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from "components/ui/resizable";
-import Chat from "./chat";
+import ChatScroll from "./chat-scroll";
 import ChatHistory from "./chat-history";
 
 const ChatContainer = () => {
     return (
-        <div className="h-full w-full bg-light rounded-3xl overflow-hidden text-dark">
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel>
-                    <Chat />
+                    <ChatScroll />
                 </ResizablePanel>
                 <ResizableHandle
                     withHandle
@@ -22,7 +21,6 @@ const ChatContainer = () => {
                     <ChatHistory />
                 </ResizablePanel>
             </ResizablePanelGroup>
-        </div>
     );
 };
 
