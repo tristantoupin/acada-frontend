@@ -7,6 +7,7 @@ import {
     updateData,
     createData,
     deleteData,
+    searchData,
 } from "services/api-connector";
 
 interface UseTopicParams extends ObjectId {
@@ -16,13 +17,18 @@ interface UseCreateTopicParams {
     accessToken: string;
     newTopic: CoreTopic;
 }
+
+interface UseSearchTopicParams {
+    accessToken?: string;
+    searchQuery: object;
+}
 type UpdateTopicParams = ObjectId & Partial<CoreTopic>; // Make all other Topic properties optional
 
 interface UseUpdateTopicParams extends UpdateTopicParams {
     accessToken: string;
 }
 interface UseDeleteTopicParams extends ObjectId {
-    accessToken: string;
+    accessToken?: string;
 }
 
 const QUERY_KEY = "Topics";
@@ -55,6 +61,14 @@ export const useCreateTopic = () => {
     });
 };
 
+export const useSearchTopic = ({ accessToken, searchQuery }: UseSearchTopicParams) => {
+    return useQuery({
+        queryKey: [QUERY_KEY],
+        queryFn: () => searchData(accessToken!, TOPIC_QUERY_PATH, searchQuery),
+        enabled: !!accessToken,
+    });
+};
+
 export const useUpdateTopic = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -70,7 +84,7 @@ export const useDeleteTopic = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ accessToken, id }: UseDeleteTopicParams) =>
-            deleteData(accessToken, TOPIC_QUERY_PATH, id),
+            deleteData(TOPIC_QUERY_PATH, id, accessToken),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
         },

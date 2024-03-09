@@ -1,6 +1,8 @@
 import React from "react";
 import Cookies from "js-cookie";
-import { Chat } from "components/chat/chat";
+import Chat from "components/chat/chat";
+import { useUser } from "hooks/useUser";
+import useAccessToken from "hooks/useAccessToken";
 
 const ChatPage = () => {
     const cookieValue =
@@ -10,11 +12,24 @@ const ChatPage = () => {
     const layout = Cookies.get("react-resizable-panels:layout");
     const defaultLayout = layout ? JSON.parse(layout) : undefined;
 
+    const accessToken = useAccessToken();
+    const { data: user } = useUser({
+        id: "65e20a73785484e2970603ff",
+        accessToken,
+    });
+    console.log("user in chat", user);
     return (
-        <Chat
-            defaultLayout={defaultLayout}
-            defaultCollapsed={defaultCollapsed}
-        />
+        <>
+            {user ? (
+                <Chat
+                    user={user}
+                    defaultLayout={defaultLayout}
+                    defaultCollapsed={defaultCollapsed}
+                />
+            ) : (
+                <></>
+            )}
+        </>
     );
 };
 

@@ -1,4 +1,5 @@
-import { Link, Sidebar } from "components/chat/sidebar";
+import React, { useEffect, useState } from "react";
+import { Sidebar } from "components/chat/sidebar";
 import ChatContainer from "components/chat/chat-container";
 import { IconHash, IconPlus } from "@tabler/icons-react";
 import { TooltipProvider } from "components/ui/tooltip";
@@ -9,51 +10,71 @@ import {
 } from "components/ui/resizable";
 import { cn } from "utils/cn";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
-import { useEffect, useState } from "react";
-import { useTopics } from "hooks/useTopics";
+import { useSearchTopic } from "hooks/useTopics";
 import useAccessToken from "hooks/useAccessToken";
-import { CoreTopic } from "@/models/topic";
+import { Topic } from "models/topic";
+import { SidebarItemProps } from "components/chat/components/sidebar-item";
+import { useUpdateUser } from "hooks/useUser";
+import { User } from "@/models/user";
 
 interface ChatProps {
-    defaultLayout: number[] | undefined;
+    user: User;
+    defaultLayout?: number[];
     defaultCollapsed?: boolean;
 }
 
-const createChatLink: Link = {
-    title: "Add Subject",
-    label: undefined,
-    icon: IconPlus,
-    variant: "default"
-};
-
-
-const baseSubjectLink = (title: string, count: number) => ({
-    title,
-    label: count.toString(),
-    icon: IconHash,
-    variant: "ghost"
-});
-
-export function Chat({
+const Chat: React.FC<ChatProps> = ({
+    user,
     defaultLayout = [265, 440, 655],
     defaultCollapsed = false,
-}: ChatProps) {
+}) => {
+    // State management for collapsible sidebar and sidebar items
     const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
-    const [sidebarLinks, setSidebarLinks] = useState([createChatLink]);
-    const navCollapsedSize = 4;
+    const createChatItem: SidebarItemProps = {
+        isCollapsed,
+        title: "Add Subject",
+        icon: IconPlus,
+        variant: "default",
+        onClickCallback: () => alert("Adding a topic")
+    };
+    const [sidebarItems, setSidebarItems] = useState<SidebarItemProps[]>([
+        createChatItem,
+    ]);
+
+    // Custom hooks for accessing tokens and topic data
     const accessToken = useAccessToken();
-    console.log("sidebarLinks:", sidebarLinks)
+    const { data: topics } = useSearchTopic({
+        accessToken,
+        searchQuery: { id: { $in: user.topic_ids } },
+    });
+    const { mutate: updateUser } = useUpdateUser();
 
-    const { data: topics } = useTopics(accessToken);
-    console.log("topics:", topics);
-
+    // Effect hook for updating sidebar items based on topics
     useEffect(() => {
         if (topics) {
-            const newSidebarLinks = topics.map((topic: CoreTopic) => baseSubjectLink(topic.name, topic.sessions.length));
-            console.log("uyseEffect:", [createChatLink, ...newSidebarLinks])
-            setSidebarLinks([createChatLink, ...newSidebarLinks]);
+            const newSidebarItems = topics.map((topic: Topic) => ({
+                isCollapsed,
+                title: topic.name,
+                label: `${topic.sessions.length} chats`,
+                icon: IconHash,
+                variant: "ghost",
+                rightClickOptions: [
+                    {
+                        label: "Remove Topic",
+                        action: () =>
+                            updateUser({
+                                accessToken,
+                                id: user.id,
+                                topic_ids: user.topic_ids.filter(
+                                    (item) => item !== topic.id
+                                ),
+                            }),
+                    },
+                ],
+            }));
+            setSidebarItems([createChatItem, ...newSidebarItems]);
         }
-    }, [topics]);
+    }, [topics, isCollapsed]);
 
     return (
         <TooltipProvider delayDuration={0}>
@@ -68,22 +89,12 @@ export function Chat({
             >
                 <ResizablePanel
                     defaultSize={defaultLayout[0]}
-                    collapsedSize={navCollapsedSize}
-                    collapsible={true}
+                    collapsedSize={4}
+                    collapsible
                     minSize={15}
                     maxSize={20}
-                    onCollapse={() => {
-                        setIsCollapsed(true);
-                        document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-                            true
-                        )}`;
-                    }}
-                    onExpand={() => {
-                        setIsCollapsed(false);
-                        document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-                            false
-                        )}`;
-                    }}
+                    onCollapse={() => setIsCollapsed(true)}
+                    onExpand={() => setIsCollapsed(false)}
                     className={cn(
                         isCollapsed &&
                             "min-w-[50px] transition-all duration-300 ease-in-out"
@@ -108,7 +119,7 @@ export function Chat({
                     </div>
                     <Sidebar
                         isCollapsed={isCollapsed}
-                        links={sidebarLinks}
+                        sidebarItems={sidebarItems}
                     />
                 </ResizablePanel>
                 <ResizableHandle withHandle />
@@ -118,4 +129,6 @@ export function Chat({
             </ResizablePanelGroup>
         </TooltipProvider>
     );
-}
+};
+
+export default Chat;

@@ -3,7 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 const useAccessToken = () => {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
-    const [accessToken, setAccessToken] = useState<string | undefined>();
+    const [accessToken, setAccessToken] = useState<string>("");
 
     useEffect(() => {
         const getToken = async () => {
@@ -12,7 +12,7 @@ const useAccessToken = () => {
                 setAccessToken(token);
             } catch (e) {
                 console.error(e);
-                setAccessToken(undefined);
+                setAccessToken("");
             }
         };
 
