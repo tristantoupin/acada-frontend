@@ -1,6 +1,6 @@
-import { Sidebar } from "components/chat/sidebar";
+import { Link, Sidebar } from "components/chat/sidebar";
 import ChatContainer from "components/chat/chat-container";
-import { IconHash } from "@tabler/icons-react";
+import { IconHash, IconPlus } from "@tabler/icons-react";
 import { TooltipProvider } from "components/ui/tooltip";
 import {
     ResizableHandle,
@@ -9,26 +9,52 @@ import {
 } from "components/ui/resizable";
 import { cn } from "utils/cn";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTopics } from "hooks/useTopics";
 import useAccessToken from "hooks/useAccessToken";
-
+import { CoreTopic } from "@/models/topic";
 
 interface ChatProps {
     defaultLayout: number[] | undefined;
     defaultCollapsed?: boolean;
 }
 
+const createChatLink: Link = {
+    title: "Add Subject",
+    label: undefined,
+    icon: IconPlus,
+    variant: "default"
+};
+
+
+const baseSubjectLink = (title: string, count: number) => ({
+    title,
+    label: count.toString(),
+    icon: IconHash,
+    variant: "ghost"
+});
+
 export function Chat({
     defaultLayout = [265, 440, 655],
     defaultCollapsed = false,
 }: ChatProps) {
     const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
+    const [sidebarLinks, setSidebarLinks] = useState([createChatLink]);
     const navCollapsedSize = 4;
     const accessToken = useAccessToken();
+    console.log("sidebarLinks:", sidebarLinks)
 
     const { data: topics } = useTopics(accessToken);
-    console.log("topics:", topics)
+    console.log("topics:", topics);
+
+    useEffect(() => {
+        if (topics) {
+            const newSidebarLinks = topics.map((topic: CoreTopic) => baseSubjectLink(topic.name, topic.sessions.length));
+            console.log("uyseEffect:", [createChatLink, ...newSidebarLinks])
+            setSidebarLinks([createChatLink, ...newSidebarLinks]);
+        }
+    }, [topics]);
+
     return (
         <TooltipProvider delayDuration={0}>
             <ResizablePanelGroup
@@ -82,14 +108,7 @@ export function Chat({
                     </div>
                     <Sidebar
                         isCollapsed={isCollapsed}
-                        links={[
-                            {
-                                title: "Inbox",
-                                label: "128",
-                                icon: IconHash,
-                                variant: "default",
-                            },
-                        ]}
+                        links={sidebarLinks}
                     />
                 </ResizablePanel>
                 <ResizableHandle withHandle />

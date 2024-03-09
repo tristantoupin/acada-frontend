@@ -7,14 +7,16 @@ import { buttonVariants } from "components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/ui/tooltip";
 import React from "react";
 
+export interface Link {
+    title: string;
+    label?: string;
+    icon: (...props: any) => JSX.Element;
+    variant: "default" | "ghost";
+}
+
 interface NavProps {
     isCollapsed: boolean;
-    links: {
-        title: string;
-        label?: string;
-        icon: (...props: any) => JSX.Element;
-        variant: "default" | "ghost";
-    }[];
+    links: Array<Link>;
 }
 
 export function Sidebar({ links, isCollapsed }: NavProps) {
