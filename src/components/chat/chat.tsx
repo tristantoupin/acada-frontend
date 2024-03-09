@@ -10,7 +10,11 @@ import {
 import { cn } from "utils/cn";
 import AcadaLogo from "assets/logos/AcadaLogo.svg";
 import { useState } from "react";
-interface MailProps {
+import { useTopics } from "hooks/useTopics";
+import useAccessToken from "hooks/useAccessToken";
+
+
+interface ChatProps {
     defaultLayout: number[] | undefined;
     defaultCollapsed?: boolean;
 }
@@ -18,10 +22,13 @@ interface MailProps {
 export function Chat({
     defaultLayout = [265, 440, 655],
     defaultCollapsed = false,
-}: MailProps) {
+}: ChatProps) {
     const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
     const navCollapsedSize = 4;
+    const accessToken = useAccessToken();
 
+    const { data: topics } = useTopics(accessToken);
+    console.log("topics:", topics)
     return (
         <TooltipProvider delayDuration={0}>
             <ResizablePanelGroup
