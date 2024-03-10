@@ -44,7 +44,7 @@ export const useTopic = ({ id, accessToken }: UseTopicParams) => {
 
 export const useTopics = (accessToken?: string) => {
     return useQuery({
-        queryKey: [QUERY_KEY],
+        queryKey: [QUERY_KEY, "all"],
         queryFn: () => fetchAllData(accessToken!, TOPIC_QUERY_PATH),
         enabled: !!accessToken,
     });
@@ -56,14 +56,16 @@ export const useCreateTopic = () => {
         mutationFn: ({ accessToken, newTopic }: UseCreateTopicParams) =>
             createData(accessToken, TOPIC_QUERY_PATH, newTopic),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, "search"] });
         },
     });
 };
 
 export const useSearchTopic = ({ accessToken, searchQuery }: UseSearchTopicParams) => {
+    const searchQueryKey = JSON.stringify(searchQuery);
+
     return useQuery({
-        queryKey: [QUERY_KEY],
+        queryKey: [QUERY_KEY, "search", searchQueryKey],
         queryFn: () => searchData(accessToken!, TOPIC_QUERY_PATH, searchQuery),
         enabled: !!accessToken,
     });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Sidebar } from "components/chat/sidebar";
 import ChatContainer from "components/chat/chat-container";
-import { IconHash, IconPlus } from "@tabler/icons-react";
+import { IconHash } from "@tabler/icons-react";
 import { TooltipProvider } from "components/ui/tooltip";
 import {
     ResizableHandle,
@@ -30,28 +30,21 @@ const Chat: React.FC<ChatProps> = ({
 }) => {
     // State management for collapsible sidebar and sidebar items
     const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
-    const createChatItem: SidebarItemProps = {
-        isCollapsed,
-        title: "Add Subject",
-        icon: IconPlus,
-        variant: "default",
-        onClickCallback: () => alert("Adding a topic")
-    };
-    const [sidebarItems, setSidebarItems] = useState<SidebarItemProps[]>([
-        createChatItem,
-    ]);
+    const { mutate: updateUser } = useUpdateUser();
+
+    const [sidebarItems, setSidebarItems] = useState<SidebarItemProps[]>([]);
 
     // Custom hooks for accessing tokens and topic data
     const accessToken = useAccessToken();
+    console.log("user", user, user.topic_ids)
     const { data: topics } = useSearchTopic({
         accessToken,
         searchQuery: { id: { $in: user.topic_ids } },
     });
-    const { mutate: updateUser } = useUpdateUser();
-
     // Effect hook for updating sidebar items based on topics
     useEffect(() => {
-        if (topics) {
+        console.log("Triggered!!")
+        if (topics && topics.length > 0) {
             const newSidebarItems = topics.map((topic: Topic) => ({
                 isCollapsed,
                 title: topic.name,
@@ -72,7 +65,7 @@ const Chat: React.FC<ChatProps> = ({
                     },
                 ],
             }));
-            setSidebarItems([createChatItem, ...newSidebarItems]);
+            setSidebarItems(newSidebarItems);
         }
     }, [topics, isCollapsed]);
 
@@ -118,6 +111,7 @@ const Chat: React.FC<ChatProps> = ({
                         </div>
                     </div>
                     <Sidebar
+                        user={user}
                         isCollapsed={isCollapsed}
                         sidebarItems={sidebarItems}
                     />

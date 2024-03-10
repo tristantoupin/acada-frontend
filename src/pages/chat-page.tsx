@@ -17,7 +17,7 @@ const ChatPage = () => {
         id: "65e20a73785484e2970603ff",
         accessToken,
     });
-    console.log("user in chat", user);
+
     return (
         <>
             {user ? (
