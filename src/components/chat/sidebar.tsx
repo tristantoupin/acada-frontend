@@ -8,16 +8,18 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "components/ui/dialog";
 import { useTopics } from "hooks/useTopics";
 import useAccessToken from "hooks/useAccessToken";
-import { ScrollArea } from "components/ui/scroll-area";
 import { Topic } from "models/topic";
 import { useUpdateUser } from "hooks/useUser";
 import { User } from "models/user";
+import { Button } from "../ui/button";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface NavProps {
     user: User;
@@ -47,31 +49,46 @@ export function Sidebar({ user, isCollapsed, sidebarItems }: NavProps) {
                     <DialogTrigger>
                         <SidebarItem {...createChatItem} />
                     </DialogTrigger>
-                    <DialogContent className="">
+                    <DialogContent className="max-h-3/4 backdrop-blur-sm">
                         <DialogHeader>
                             <DialogTitle>
                                 What subject are you interested in learning?
                             </DialogTitle>
                             <DialogDescription>
-                                Select the tutor you would like to add to you
+                                Select the tutor you would like to add to your
                                 list. Each tutor is fully customized for these
                                 subject.
                             </DialogDescription>
                         </DialogHeader>
-                        <ScrollArea>
-                            <div className="flex flex-col space-y-4 max-h-48 overflow-scroll">
-                                {[...topics, ...topics, ...topics, ...topics]?.map((topic: Topic) => {
+                        <DialogFooter className="sm:justify-center">
+                            <div className="grid grid-cols-3 gap-4">
+                                {topics?.map((topic: Topic) => {
                                     return (
-                                        <div key={topic.id} className="h-4" onClick={() =>
-                                            updateUser({
-                                                accessToken,
-                                                id: user.id,
-                                                topic_ids: [...user.topic_ids, topic.id],
-                                            })}>{topic.name}</div>
+                                        <DialogClose asChild>
+                                            <Button
+                                                key={topic.id}
+                                                variant={"secondary"}
+                                                disabled={user.topic_ids.includes(
+                                                    topic.id
+                                                )}
+                                                onClick={() =>
+                                                    updateUser({
+                                                        accessToken,
+                                                        id: user.id,
+                                                        topic_ids: [
+                                                            ...user.topic_ids,
+                                                            topic.id,
+                                                        ],
+                                                    })
+                                                }
+                                            >
+                                                {topic.name}
+                                            </Button>
+                                        </DialogClose>
                                     );
                                 })}
                             </div>
-                        </ScrollArea>
+                        </DialogFooter>
                     </DialogContent>
                 </Dialog>
                 {sidebarItems.map((item) => (
