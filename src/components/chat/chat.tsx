@@ -15,7 +15,8 @@ import useAccessToken from "hooks/useAccessToken";
 import { Topic } from "models/topic";
 import { SidebarItemProps } from "components/chat/components/sidebar-item";
 import { useUpdateUser } from "hooks/useUser";
-import { User } from "@/models/user";
+import { User } from "models/user";
+import { Skeleton } from "components/ui/skeleton";
 
 interface ChatProps {
     user: User;
@@ -36,14 +37,16 @@ const Chat: React.FC<ChatProps> = ({
 
     // Custom hooks for accessing tokens and topic data
     const accessToken = useAccessToken();
-    console.log("user", user, user.topic_ids)
     const { data: topics } = useSearchTopic({
         accessToken,
         searchQuery: { id: { $in: user.topic_ids } },
     });
+    const [selectedTopic, setSelectedTopic] = useState<string | undefined>(
+        topics?.length && (topics[0]?.id ?? undefined)
+    );
+
     // Effect hook for updating sidebar items based on topics
     useEffect(() => {
-        console.log("Triggered!!")
         if (topics && topics.length > 0) {
             const newSidebarItems = topics.map((topic: Topic) => ({
                 isCollapsed,
@@ -51,6 +54,7 @@ const Chat: React.FC<ChatProps> = ({
                 label: `${topic.sessions.length} chats`,
                 icon: IconHash,
                 variant: "ghost",
+                onClickCallback: () => setSelectedTopic(topic.id),
                 rightClickOptions: [
                     {
                         label: "Remove Topic",
@@ -118,7 +122,17 @@ const Chat: React.FC<ChatProps> = ({
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-                    <ChatContainer />
+                    {selectedTopic ? (
+                        <ChatContainer topic_id={selectedTopic} />
+                    ) : (
+                        <div className="flex flex-col space-y-3">
+                            <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-[250px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                            </div>
+                        </div>
+                    )}
                 </ResizablePanel>
             </ResizablePanelGroup>
         </TooltipProvider>
