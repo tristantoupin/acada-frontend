@@ -28,6 +28,14 @@ interface UseDeleteUserParams extends ObjectId {
 const QUERY_KEY = "User";
 const USER_QUERY_PATH = "users";
 
+export const useMe = (accessToken: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEY],
+        queryFn: () => fetchData(accessToken!, USER_QUERY_PATH, "me"),
+        enabled: !!accessToken,
+    })
+}
+
 export const useUser = ({ id, accessToken }: UseUserParams) => {
     return useQuery({
         queryKey: [QUERY_KEY, id],

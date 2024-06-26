@@ -21,7 +21,7 @@ const useAccessToken = () => {
         }
     }, [isAuthenticated, getAccessTokenSilently]);
 
-    return accessToken;
+    return { accessToken };
 };
 
 export default useAccessToken;

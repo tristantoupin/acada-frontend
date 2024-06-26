@@ -2,10 +2,10 @@ import React from "react";
 
 const ChatHeader = ({title}: {title: string}) => {
     return (
-        <div className="w-full bg-transparent py-4 px-6 border-b border-b-slate-400 shadow-xl">
-            <span className="text-lg text-ellipsis overflow-hidden text-nowrap w-full">
+        <div className="h-16 fixed z-10 w-full bg-white py-4 px-6 shadow-xl">
+            <div className="text-lg text-ellipsis overflow-hidden text-nowrap w-full">
                 {title}
-            </span>
+            </div>
         </div>
     );
 };

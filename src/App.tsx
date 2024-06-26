@@ -22,9 +22,13 @@ const App: React.FC = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/test" element={<Test />} />
-                <Route
+                {/* <Route
                     path="/chat"
                     element={<AuthenticationGuard component={ChatPage} />}
+                /> */}
+                <Route
+                    path="/chat"
+                    element={<ChatPage />}
                 />
             </Routes>
         </QueryClientProvider>

@@ -12,9 +12,9 @@ const ChatPage = () => {
     const layout = Cookies.get("react-resizable-panels:layout");
     const defaultLayout = layout ? JSON.parse(layout) : undefined;
 
-    const accessToken = useAccessToken();
+    const { accessToken } = useAccessToken();
     const { data: user } = useUser({
-        id: "65e20a73785484e2970603ff",
+        id: "6678621891c6e15f2b1cb5c1",
         accessToken,
     });
 

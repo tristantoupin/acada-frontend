@@ -7,7 +7,7 @@ import useAccessToken from "hooks/useAccessToken";
 
 const Test = () => {
     const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
-    const accessToken = useAccessToken();
+    const { accessToken } = useAccessToken();
     const { data: users } = useUsers(accessToken);
 
     return (

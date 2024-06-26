@@ -30,7 +30,7 @@ interface NavProps {
 export function Sidebar({ user, isCollapsed, sidebarItems }: NavProps) {
     const { mutate: updateUser } = useUpdateUser();
 
-    const accessToken = useAccessToken();
+    const { accessToken } = useAccessToken();
     const { data: topics } = useTopics(accessToken);
     const createChatItem: SidebarItemProps = {
         isCollapsed,
@@ -49,7 +49,7 @@ export function Sidebar({ user, isCollapsed, sidebarItems }: NavProps) {
                     <DialogTrigger>
                         <SidebarItem {...createChatItem} />
                     </DialogTrigger>
-                    <DialogContent className="max-h-3/4 backdrop-blur-sm">
+                    <DialogContent className="max-h-3/4">
                         <DialogHeader>
                             <DialogTitle>
                                 What subject are you interested in learning?
@@ -71,7 +71,8 @@ export function Sidebar({ user, isCollapsed, sidebarItems }: NavProps) {
                                                 disabled={user.topic_ids.includes(
                                                     topic.id
                                                 )}
-                                                onClick={() =>
+                                                onClick={() => {
+                                                    console.log("user",user);
                                                     updateUser({
                                                         accessToken,
                                                         id: user.id,
@@ -79,7 +80,7 @@ export function Sidebar({ user, isCollapsed, sidebarItems }: NavProps) {
                                                             ...user.topic_ids,
                                                             topic.id,
                                                         ],
-                                                    })
+                                                    })}
                                                 }
                                             >
                                                 {topic.name}

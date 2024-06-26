@@ -36,7 +36,7 @@ const Chat: React.FC<ChatProps> = ({
     const [sidebarItems, setSidebarItems] = useState<SidebarItemProps[]>([]);
 
     // Custom hooks for accessing tokens and topic data
-    const accessToken = useAccessToken();
+    const { accessToken } = useAccessToken();
     const { data: topics } = useSearchTopic({
         accessToken,
         searchQuery: { id: { $in: user.topic_ids } },
@@ -73,69 +73,75 @@ const Chat: React.FC<ChatProps> = ({
         }
     }, [topics, isCollapsed]);
 
+    useEffect(() => {
+        console.log("selectedTopic", topics)
+    }, [selectedTopic])
+
     return (
-        <TooltipProvider delayDuration={0}>
-            <ResizablePanelGroup
-                direction="horizontal"
-                onLayout={(sizes: number[]) => {
-                    document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-                        sizes
-                    )}`;
-                }}
-                className="h-full max-h-screen items-stretch"
-            >
-                <ResizablePanel
-                    defaultSize={defaultLayout[0]}
-                    collapsedSize={4}
-                    collapsible
-                    minSize={15}
-                    maxSize={20}
-                    onCollapse={() => setIsCollapsed(true)}
-                    onExpand={() => setIsCollapsed(false)}
-                    className={cn(
-                        isCollapsed &&
-                            "min-w-[50px] transition-all duration-300 ease-in-out"
-                    )}
+        <div className="h-screen">
+            <TooltipProvider delayDuration={0}>
+                <ResizablePanelGroup
+                    direction="horizontal"
+                    onLayout={(sizes: number[]) => {
+                        document.cookie = `react-resizable-panels:layout=${JSON.stringify(
+                            sizes
+                        )}`;
+                    }}
+                    className="h-full max-h-screen items-stretch"
                 >
-                    <div
+                    <ResizablePanel
+                        defaultSize={defaultLayout[0]}
+                        collapsedSize={4}
+                        collapsible
+                        minSize={15}
+                        maxSize={20}
+                        onCollapse={() => setIsCollapsed(true)}
+                        onExpand={() => setIsCollapsed(false)}
                         className={cn(
-                            "flex h-[52px] items-center justify-center",
-                            isCollapsed ? "h-[52px]" : "px-2"
+                            isCollapsed &&
+                                "min-w-[50px] transition-all duration-300 ease-in-out"
                         )}
                     >
-                        <div className="flex flex-1 items-center space-x-4">
-                            <img
-                                alt="Acada Logo"
-                                className="h-12 w-12"
-                                src={AcadaLogo}
-                            />
-                            <span className="shrink font-bold text-xl">
-                                Acada
-                            </span>
-                        </div>
-                    </div>
-                    <Sidebar
-                        user={user}
-                        isCollapsed={isCollapsed}
-                        sidebarItems={sidebarItems}
-                    />
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-                    {selectedTopic ? (
-                        <ChatContainer topic_id={selectedTopic} />
-                    ) : (
-                        <div className="flex flex-col space-y-3">
-                            <Skeleton className="h-[125px] w-[250px] rounded-xl" />
-                            <div className="space-y-2">
-                                <Skeleton className="h-4 w-[250px]" />
-                                <Skeleton className="h-4 w-[200px]" />
+                        <div
+                            className={cn(
+                                "flex h-[52px] items-center justify-center",
+                                isCollapsed ? "h-[52px]" : "px-2"
+                            )}
+                        >
+                            <div className="flex flex-1 items-center space-x-4">
+                                <img
+                                    alt="Acada Logo"
+                                    className="h-12 w-12"
+                                    src={AcadaLogo}
+                                />
+                                <span className="shrink font-bold text-xl">
+                                    Acada
+                                </span>
                             </div>
                         </div>
-                    )}
-                </ResizablePanel>
-            </ResizablePanelGroup>
-        </TooltipProvider>
+                        <Sidebar
+                            user={user}
+                            isCollapsed={isCollapsed}
+                            sidebarItems={sidebarItems}
+                        />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+                        {selectedTopic ? (
+                            <ChatContainer topic_id={selectedTopic} />
+                        ) : (
+                            <div className="flex flex-col space-y-3">
+                                <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-[250px]" />
+                                    <Skeleton className="h-4 w-[200px]" />
+                                </div>
+                            </div>
+                        )}
+                    </ResizablePanel>
+                </ResizablePanelGroup>
+            </TooltipProvider>
+        </div>
     );
 };
 
