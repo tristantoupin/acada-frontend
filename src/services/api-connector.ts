@@ -30,7 +30,6 @@ export const fetchAllData = (accessToken:string, path: string) => {
 };
 
 export const searchData = (accessToken:string, path: string, query: object) => {
-    console.log("searchData", query)
     return sendRequest(`/${path}/search`, {
         method: "POST",
         headers: {

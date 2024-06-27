@@ -1,4 +1,4 @@
-import React from "react";
+import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
 import ChatHeader from "./chat-header";
 import { Input } from "components/ui/input";
 import { ScrollArea } from "components/ui/scroll-area";
@@ -18,20 +18,27 @@ const ChatScroll = ({
     messages,
     onSendMessage,
 }: ChatScrollProps) => {
-    const [messageText, setMessageText] = React.useState(""); // State to hold the input field text
+    const [messageText, setMessageText] = useState("");
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const handleSendMessage = () => {
-        if (!messageText.trim()) return;
         onSendMessage(messageText);
-        setMessageText("");
     };
 
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' && messageText.trim()) {
             handleSendMessage();
+            setMessageText("");
         }
     };
 
+
+    useEffect(() => {
+        // Scroll to the bottom whenever messages change
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, [messages]);
 
     return (
         <div className="flex flex-col h-screen">
@@ -40,8 +47,10 @@ const ChatScroll = ({
                 <ScrollArea className="flex-1 pr-4">
                     <div className="space-y-4">
                         {messages?.map(
-                            (message, c) => (
-                                <Message key={c} content={message.content} author={message.author} isBot={c % 2 === 0} />
+                            (message, index) => (
+                                <div id={`${message.author}_${index}`} ref={index + 1 === messages.length ? chatContainerRef : null}>
+                                    <Message key={index} content={message.content} author={message.author} isBot={index % 2 === 0} />
+                                </div>
                             )
                         )}
                     </div>
